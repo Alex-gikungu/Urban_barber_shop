@@ -1,0 +1,105 @@
+/* appointmentform.css */
+
+.page-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4rem 1rem;
+  background: linear-gradient(to right, #e3f2fd, #ffffff);
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.appointment-form {
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  padding: 2.5rem 2rem;
+  width: 100%;
+  max-width: 600px;
+}
+
+.appointment-title {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: #0c0c0c;
+  font-weight: 600;
+}
+
+label {
+  display: block;
+  margin-top: 1rem;
+  margin-bottom: 0.3rem;
+  color: #333;
+  font-weight: 500;
+}
+
+.input-field,
+.select-field,
+.message-field,
+.date-picker-wrapper input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  color: #333; 
+  border: 1px solid #cfd8dc;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  background-color: #f9f9f9;
+}
+
+.input-field:focus,
+.select-field:focus,
+.message-field:focus,
+.date-picker-wrapper input:focus {
+  border-color: #e52e71;
+  box-shadow: 0 4px 12px rgba(229, 46, 113, 0.3);
+  outline: none;
+  background-color: #ffffff;
+}
+
+.select-field {
+  appearance: none;
+  background: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%23333" viewBox="0 0 16 16"><path d="M4.646 6.646a.5.5 0 0 1 .708 0L8 9.293l2.646-2.647a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 0-.708z"/></svg>')
+    no-repeat right 1rem center;
+  background-size: 1rem;
+}
+
+.date-picker-wrapper {
+  position: relative;
+}
+
+.message-field {
+  resize: vertical;
+}
+
+.submit-btn {
+  background: linear-gradient(to right, #e52e71, #ff416c); /* Gradient from left to right */
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 12px 24px;
+  font-weight: bold;
+  margin-top:5%;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 12px rgba(229, 46, 113, 0.3);
+}
+
+.submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(229, 46, 113, 0.4);
+}
+
+
+@media (max-width: 600px) {
+  .appointment-form {
+    padding: 2rem 1rem;
+  }
+
+  .appointment-title {
+    font-size: 1.6rem;
+  }
+}
