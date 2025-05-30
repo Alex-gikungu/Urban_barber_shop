@@ -15,7 +15,9 @@ import Service from "./pages/Service";
 import Profile from "./components/Profile";
 import Appointments from "./pages/Appointments";
 import Booking from './pages/Booking';
-
+import BookingPage from './pages/Bookings';
+import AppointmentList from './pages/AppointmentList';
+import Staff from './pages/Staff';
 const App = () => {
   return (
     <GoogleOAuthProvider clientId="488127932223-06f7ptuo4ntg5peuj0eqsq96cello6t6.apps.googleusercontent.com">
@@ -31,9 +33,12 @@ const App = () => {
             <Route path="/payments/new" element={<PaymentForm />} />
             <Route path="/payments" element={<PaymentList />} />
             <Route path="/booking" element={<Booking />} />
+            <Route path="/bookings" element={<BookingPage />} />
             <Route path="/services" element={<Service />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/appointments" element={<Appointments />} />
+            <Route path="/appointment" element={<AppointmentList />} />
+            <Route path="/staff" element={<Staff />} />
           </Routes>
           <Footer />
         </AuthProvider>

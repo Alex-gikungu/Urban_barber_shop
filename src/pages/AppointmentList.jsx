@@ -1,72 +1,106 @@
-// import React from 'react';
+import React, { useEffect, useState } from 'react';
 
-// const AppointmentList = ({ appointments, onCancel }) => {
-//   return (
-//     <div className="mt-10 w-full md:w-2/3">
-//       <h2 className="text-2xl font-semibold mb-6 text-white">Your Appointments</h2>
+const AppointmentList = () => {
+  const [appointments, setAppointments] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-//       {appointments.length === 0 ? (
-//         <p className="text-gray-400 bg-gray-800 p-4 rounded-lg shadow">
-//           You have no appointments scheduled.
-//         </p>
-//       ) : (
-//         <ul className="space-y-4">
-//           {appointments.map((appt) => {
-//             const formattedDate = appt.date
-//               ? new Date(appt.date).toLocaleDateString('en-US', {
-//                   year: 'numeric',
-//                   month: 'long',
-//                   day: 'numeric',
-//                 })
-//               : 'N/A';
-//             const formattedTime = appt.date
-//               ? new Date(appt.date).toLocaleTimeString('en-US', {
-//                   hour: '2-digit',
-//                   minute: '2-digit',
-//                 })
-//               : 'N/A';
+  const fetchAppointments = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.error('No token found');
+        setLoading(false);
+        return;
+      }
+      const response = await fetch('http://127.0.0.1:5000/api/appointments/', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error('Failed to fetch appointments');
+      }
+      const data = await response.json();
+      setAppointments(data);
+      setLoading(false);
+    } catch (error) {
+      console.error('Failed to fetch appointments:', error);
+      setLoading(false);
+    }
+  };
 
-//             return (
-//               <li
-//                 key={appt.id}
-//                 className="bg-gray-800 text-white p-5 rounded-lg flex flex-col md:flex-row md:justify-between items-start md:items-center transition-all hover:shadow-lg"
-//               >
-//                 <div className="mb-2 md:mb-0">
-//                   <p className="font-semibold">
-//                     <span className="text-blue-400">Service:</span> {appt.service}
-//                   </p>
-//                   <p>
-//                     <span className="text-blue-400">Barber:</span> {appt.barber?.full_name || 'N/A'}
-//                   </p>
-//                   <p>
-//                     <span className="text-blue-400">Date:</span> {formattedDate}
-//                   </p>
-//                   <p>
-//                     <span className="text-blue-400">Time:</span> {formattedTime}
-//                   </p>
-//                   <p>
-//                     <span className="text-blue-400">Status:</span> {appt.status || 'Pending'}
-//                   </p>
-//                   {appt.notes && (
-//                     <p>
-//                       <span className="text-blue-400">Notes:</span> {appt.notes}
-//                     </p>
-//                   )}
-//                 </div>
+  const updateStatus = async (id, status) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.error('No token found');
+        return;
+      }
+      const response = await fetch(`http://127.0.0.1:5000/api/appointments/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ status }),
+      });
 
-//                 <button
-//                   onClick={() => onCancel(appt.id)}
-//                   className="mt-3 md:mt-0 bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded shadow-md transition-transform hover:scale-105"
-//                 >
-//                   Cancel
-//                 </button>
-//               </li>
-//             );
-//           })}
-//         </ul>
-//       )}
-//     </div>
-//   );
-// };
+      if (response.ok) {
+        fetchAppointments();
+      } else {
+        const errorData = await response.json();
+        console.error('Failed to update appointment:', errorData.error || response.statusText);
+      }
+    } catch (error) {
+      console.error('Error updating appointment:', error);
+    }
+  };
 
-// export default AppointmentList;
+  useEffect(() => {
+    fetchAppointments();
+  }, []);
+
+  if (loading) {
+    return <p className="text-center mt-10 text-gray-400">Loading appointments...</p>;
+  }
+
+  return (
+    <div className="p-4 min-h-screen bg-gray-900 text-white">
+      <h2 className="text-2xl font-bold mb-6 text-center">All Appointments</h2>
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {appointments.map((appointment) => (
+          <div key={appointment.id} className="bg-gray-800 shadow-md rounded-lg p-4 border border-gray-700">
+            <p className="mb-1"><span className="font-semibold">Customer:</span> {appointment.customer_name || 'N/A'}</p>
+            <p className="mb-1"><span className="font-semibold">Barber:</span> {appointment.barber_name || 'N/A'}</p>
+            <p className="mb-1"><span className="font-semibold">Service:</span> {appointment.service_name || 'N/A'}</p>
+            <p className="mb-1"><span className="font-semibold">Date:</span> {appointment.date ? new Date(appointment.date).toLocaleString() : 'N/A'}</p>
+            <p className="mb-1">
+              <span className="font-semibold">Status:</span>
+              <span className={`ml-1 px-2 py-1 rounded text-white text-sm ${appointment.status === 'pending' ? 'bg-yellow-500' : appointment.status === 'confirmed' ? 'bg-green-600' : 'bg-red-600'}`}>
+                {appointment.status}
+              </span>
+            </p>
+            {appointment.notes && <p className="mb-2"><span className="font-semibold">Notes:</span> {appointment.notes}</p>}
+
+            <div className="flex justify-between mt-4">
+              <button
+                onClick={() => updateStatus(appointment.id, 'confirmed')}
+                className="bg-green-500 hover:bg-green-600 text-white px-4 py-1 rounded"
+              >
+                Accept
+              </button>
+              <button
+                onClick={() => updateStatus(appointment.id, 'cancelled')}
+                className="bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded"
+              >
+                Decline
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default AppointmentList;

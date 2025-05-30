@@ -88,7 +88,7 @@ const Appointments = () => {
     setLoading(true);
     setError(null);
     try {
-      console.log('Sending appointment data:', data); // Debug the payload
+      console.log('Sending appointment data:', data);
       await api.post('/appointments/', data);
       await fetchAppointments();
     } catch (error) {
@@ -116,7 +116,7 @@ const Appointments = () => {
     setLoading(true);
     setError(null);
     try {
-      await api.delete(`/appointments/${id}`);
+      await api.put(`/appointments/${id}`, { status: 'cancelled' }); // Update status to cancelled
       await fetchAppointments();
     } catch (error) {
       console.error('Error canceling appointment:', error);
@@ -132,6 +132,20 @@ const Appointments = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const reappoint = (appt) => {
+    // Pre-fill the form with the cancelled appointment's details
+    setFormData({
+      service: appt.service,
+      notes: appt.notes || '',
+      status: 'pending',
+      barber_id: appt.barber_id.toString(),
+    });
+    const apptDate = new Date(appt.date);
+    setDate(apptDate);
+    setTime(apptDate.toTimeString().slice(0, 5)); // Extract HH:MM
+    window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to the form
   };
 
   const handleChange = (e) => {
@@ -160,7 +174,6 @@ const Appointments = () => {
       return;
     }
 
-    // Validate and combine date and time
     if (!/^\d{2}:\d{2}$/.test(time)) {
       setError('Invalid time format. Please use HH:MM (e.g., 14:30).');
       return;
@@ -334,18 +347,44 @@ const Appointments = () => {
                       className="bg-gray-800 text-white p-5 rounded-lg flex flex-col md:flex-row md:justify-between items-start md:items-center transition-all hover:shadow-lg"
                     >
                       <div>
-                        <p><strong>Service:</strong> {appt.service}</p>
+                        <p><strong>Service:</strong> {appt.service_name || appt.service || 'N/A'}</p>
+                        <p><strong>Barber:</strong> {appt.barber_name || 'N/A'}</p>
                         <p><strong>Date:</strong> {formattedDate}</p>
                         <p><strong>Time:</strong> {formattedTime}</p>
-                        <p><strong>Status:</strong> {appt.status}</p>
+                        <p>
+                          <strong>Status:</strong>{' '}
+                          <span
+                            className={`px-2 py-1 rounded text-sm text-white ${
+                              appt.status === 'pending'
+                                ? 'bg-yellow-500'
+                                : appt.status === 'confirmed'
+                                ? 'bg-green-600'
+                                : appt.status === 'cancelled'
+                                ? 'bg-red-600'
+                                : 'bg-gray-600'
+                            }`}
+                          >
+                            {appt.status}
+                          </span>
+                        </p>
                         {appt.notes && <p><strong>Notes:</strong> {appt.notes}</p>}
                       </div>
-                      <button
-                        onClick={() => cancelAppointment(appt.id)}
-                        className="mt-4 md:mt-0 bg-red-500 hover:bg-red-600 px-4 py-2 rounded text-white"
-                      >
-                        Cancel
-                      </button>
+                      {appt.status === 'pending' && (
+                        <button
+                          onClick={() => cancelAppointment(appt.id)}
+                          className="mt-4 md:mt-0 bg-red-500 hover:bg-red-600 px-4 py-2 rounded text-white"
+                        >
+                          Cancel
+                        </button>
+                      )}
+                      {appt.status === 'cancelled' && (
+                        <button
+                          onClick={() => reappoint(appt)}
+                          className="mt-4 md:mt-0 bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded text-white"
+                        >
+                          Re-appoint
+                        </button>
+                      )}
                     </li>
                   );
                 })}

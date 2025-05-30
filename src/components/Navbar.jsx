@@ -22,8 +22,8 @@ const Navbar = () => {
     { label: 'Home', path: '/' },
     { label: 'About', path: '/about' },
     { label: 'Services', path: '/services' },
-    { label: 'Make Payment', path: '/payments/new' },
-    { label: 'Payment List', path: '/payments' },
+    { label: 'Bookings', path: '/bookings' },
+    { label: 'Appointments', path: '/appointment' },
     { label: 'Contact Us', path: '/contact' },
   ];
 

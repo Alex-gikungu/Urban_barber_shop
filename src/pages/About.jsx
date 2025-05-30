@@ -27,9 +27,9 @@ const About = () => {
             <h2 className="text-3xl font-semibold mb-4 text-white">Our Values</h2>
             <ul className="list-disc list-inside space-y-3 text-gray-200">
               {['Professionalism & Excellence', 'Customer-Centered Approach', 'Smart Solutions for Real Problems', 'Transparency & Integrity'].map((value, index) => (
-                <li key={index} className="relative group text-lg hover:text-blue-400 transition-colors duration-300">
+                <li key={index} className="relative group text-lg hover:text-red-400 transition-colors duration-300">
                   {value}
-                  <span className="absolute left-0 bottom-0 w-0 h-[2px] bg-blue-400 transition-all duration-300 group-hover:w-full"></span>
+                  <span className="absolute left-0 bottom-0 w-0 h-[2px] bg-red-400 transition-all duration-300 group-hover:w-full"></span>
                 </li>
               ))}
             </ul>
@@ -38,9 +38,9 @@ const About = () => {
             <h2 className="text-3xl font-semibold mb-4 text-white">Why Choose Us?</h2>
             <ul className="list-disc list-inside space-y-3 text-gray-200">
               {['Easy Appointment Booking & Management', 'Inventory and Staff Management Tools', 'Secure and Fast Payment Processing', 'Mobile-friendly and Cloud-based'].map((value, index) => (
-                <li key={index} className="relative group text-lg hover:text-blue-400 transition-colors duration-300">
+                <li key={index} className="relative group text-lg hover:text-red-400 transition-colors duration-300">
                   {value}
-                  <span className="absolute left-0 bottom-0 w-0 h-[2px] bg-blue-400 transition-all duration-300 group-hover:w-full"></span>
+                  <span className="absolute left-0 bottom-0 w-0 h-[2px] bg-red-400 transition-all duration-300 group-hover:w-full"></span>
                 </li>
               ))}
             </ul>
@@ -56,7 +56,7 @@ const About = () => {
             Find us in the heart of the city, always ready to serve you with style and precision.
           </p>
           <Link
-            to="/appointments/new"
+            to="/appointments"
             className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg hover:scale-105 hover:shadow-lg transition duration-300"
           >
             Book Now
@@ -83,3 +83,4 @@ const About = () => {
 };
 
 export default About;
+
