@@ -2,26 +2,33 @@ from flask import Flask, request, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_cors import CORS
+from flask_mail import Mail  # ✅ Import Flask-Mail
 from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv
 import os
 import logging
 
+# Logging setup
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
+# Load environment variables
 load_dotenv(os.path.join(os.path.dirname(__file__), '.env'))
 
+# Print Google OAuth credentials for debugging
 print("GOOGLE_CLIENT_ID:", os.getenv("GOOGLE_CLIENT_ID"))
 print("GOOGLE_CLIENT_SECRET:", os.getenv("GOOGLE_CLIENT_SECRET"))
 
+# Global instances
 db = SQLAlchemy()
 migrate = Migrate()
 oauth = OAuth()
+mail = Mail()  # ✅ Initialize Mail
 
 def create_app():
     app = Flask(__name__)
 
+    # App configuration
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL", "sqlite:///barber.db")
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SECRET_KEY'] = os.getenv("SECRET_KEY", "supersecretkey")
@@ -29,10 +36,21 @@ def create_app():
     app.config['GOOGLE_CLIENT_ID'] = os.getenv("GOOGLE_CLIENT_ID")
     app.config['GOOGLE_CLIENT_SECRET'] = os.getenv("GOOGLE_CLIENT_SECRET")
 
+    # Email configuration
+    app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+    app.config['MAIL_PORT'] = 587
+    app.config['MAIL_USE_TLS'] = True
+    app.config['MAIL_USERNAME'] = os.getenv("EMAIL_USER")
+    app.config['MAIL_PASSWORD'] = os.getenv("EMAIL_PASS")
+    app.config['MAIL_DEFAULT_SENDER'] = os.getenv("EMAIL_USER")
+
+    # Initialize extensions
     db.init_app(app)
     migrate.init_app(app, db)
-
     oauth.init_app(app)
+    mail.init_app(app)  # ✅ Initialize Flask-Mail with app
+
+    # Google OAuth setup
     oauth.register(
         name='google',
         client_id=app.config['GOOGLE_CLIENT_ID'],
@@ -44,6 +62,7 @@ def create_app():
         client_kwargs={'scope': 'openid email profile'}
     )
 
+    # Enable CORS
     CORS(app, resources={
         r"/api/*": {
             "origins": ["http://localhost:3000", "http://localhost:5173"],
@@ -64,6 +83,7 @@ def create_app():
         }
     })
 
+    # Serve static uploads
     @app.route('/static/<path:filename>')
     def serve_static(filename):
         return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
@@ -91,6 +111,7 @@ def create_app():
     app.register_blueprint(service_bp, url_prefix="/api/services")
     app.register_blueprint(booking_bp, url_prefix="/api/bookings")  # ✅ Register booking blueprint
 
+    # Request logging
     @app.before_request
     def log_request():
         logger.debug(f"Request: {request.path}, Headers: {request.headers}")

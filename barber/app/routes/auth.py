@@ -14,7 +14,7 @@ auth_bp = Blueprint('auth', __name__)
 
 def generate_token(user_id):
     return jwt.encode(
-        {'user_id': user_id, 'exp': datetime.utcnow() + timedelta(days=7)},
+        {'user_id': user_id, 'exp': datetime.utcnow() + timedelta(days=1)},
         current_app.config['SECRET_KEY'],
         algorithm='HS256'
     )

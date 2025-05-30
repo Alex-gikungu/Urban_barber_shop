@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from app.models import Staff  # Make sure this points correctly to your Staff model
 from app import db
+from flask_cors import cross_origin
 import logging
 
 logger = logging.getLogger(__name__)
@@ -41,7 +42,8 @@ def add_staff():
         return jsonify({'error': str(e)}), 400
 
 # PATCH update staff
-@staff_bp.route('/<int:id>', methods=['PATCH'])
+@staff_bp.route('/<int:id>', methods=['PATCH', 'OPTIONS'])
+@cross_origin(origin='http://localhost:5173', supports_credentials=True)
 def update_staff(id):
     data = request.get_json()
     staff = Staff.query.get_or_404(id)
