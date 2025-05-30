@@ -16,13 +16,12 @@ This is a full-stack **Role-Based Authentication System** built using **React (w
 - 🖥️ Responsive Navigation with Conditional Links
 - 📂 Structured codebase with clean separation of concerns
 
----
 
 ## 🛠️ Installation & Setup
 
 ### 🔃 Clone the Repository
 
-```bash
+
 git clone https://github.com/Alex-gikungu/Urban_barber_shop.git
 
 cd Urban_barber_shop
